@@ -54,10 +54,10 @@ function SkillFormDialog({
           name: skill.name,
           category: skill.category,
           proficiency: skill.proficiency,
-          icon_url: skill.icon_url ?? "",
-          order: skill.order,
+          icon: skill.icon ?? "",
+          sort_order: skill.sort_order,
         }
-      : { proficiency: 50, order: 0 },
+      : { proficiency: 50, sort_order: 0 },
   });
 
   const onSubmit = async (data: SkillFormData) => {
@@ -118,13 +118,13 @@ function SkillFormDialog({
               <Label>Order</Label>
               <Input
                 type="number"
-                {...register("order", { valueAsNumber: true })}
+                {...register("sort_order", { valueAsNumber: true })}
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Icon URL</Label>
-            <Input {...register("icon_url")} />
+            <Label>Icon</Label>
+            <Input {...register("icon")} />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
@@ -239,7 +239,7 @@ export default function AdminSkillsPage() {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>{skill.order}</TableCell>
+                        <TableCell>{skill.sort_order}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button

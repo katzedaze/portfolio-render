@@ -25,7 +25,7 @@ export function useUpdateSkill() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<SkillFormData> }) =>
-      api.put<Skill>(`/api/skills/${id}`, data),
+      api.patch<Skill>(`/api/skills/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.skills.all });
     },

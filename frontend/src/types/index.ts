@@ -3,16 +3,10 @@ export interface Profile {
   name: string;
   title: string;
   bio: string;
-  email: string;
-  github_url?: string;
-  linkedin_url?: string;
-  twitter_url?: string;
-  website_url?: string;
-  avatar_url?: string;
-  resume_url?: string;
-  is_available: boolean;
-  created_at: string;
-  updated_at: string;
+  avatar_url?: string | null;
+  email?: string | null;
+  github_url?: string | null;
+  linkedin_url?: string | null;
 }
 
 export interface Project {
@@ -20,14 +14,14 @@ export interface Project {
   title: string;
   slug: string;
   description: string;
-  long_description?: string;
-  thumbnail_url?: string;
-  demo_url?: string;
-  github_url?: string;
-  technologies: string[];
+  content: string;
+  thumbnail_url?: string | null;
+  live_url?: string | null;
+  github_url?: string | null;
   is_featured: boolean;
   is_published: boolean;
-  order: number;
+  sort_order: number;
+  skills: Skill[];
   created_at: string;
   updated_at: string;
 }
@@ -37,10 +31,8 @@ export interface Skill {
   name: string;
   category: string;
   proficiency: number;
-  icon_url?: string;
-  order: number;
-  created_at: string;
-  updated_at: string;
+  icon?: string | null;
+  sort_order: number;
 }
 
 export interface ContactMessage {
@@ -50,13 +42,6 @@ export interface ContactMessage {
   subject: string;
   message: string;
   is_read: boolean;
-  created_at: string;
-}
-
-export interface AdminUser {
-  id: number;
-  email: string;
-  is_active: boolean;
   created_at: string;
 }
 

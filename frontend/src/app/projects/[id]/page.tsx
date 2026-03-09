@@ -86,9 +86,9 @@ export default async function ProjectDetailPage({
         </div>
 
         <div className="flex gap-3 flex-wrap">
-          {project.demo_url && (
+          {project.live_url && (
             <Button asChild>
-              <a href={project.demo_url} target="_blank" rel="noopener noreferrer">
+              <a href={project.live_url} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Live Demo
               </a>
@@ -104,15 +104,15 @@ export default async function ProjectDetailPage({
           )}
         </div>
 
-        {project.technologies.length > 0 && (
+        {project.skills.length > 0 && (
           <>
             <Separator />
             <div>
               <h2 className="text-xl font-semibold mb-3">Technologies</h2>
               <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech) => (
-                  <Badge key={tech} variant="outline">
-                    {tech}
+                {project.skills.map((skill) => (
+                  <Badge key={skill.id} variant="outline">
+                    {skill.name}
                   </Badge>
                 ))}
               </div>
@@ -120,12 +120,12 @@ export default async function ProjectDetailPage({
           </>
         )}
 
-        {project.long_description && (
+        {project.content && (
           <>
             <Separator />
             <div>
               <h2 className="text-xl font-semibold mb-3">Details</h2>
-              <MarkdownRenderer content={project.long_description} />
+              <MarkdownRenderer content={project.content} />
             </div>
           </>
         )}

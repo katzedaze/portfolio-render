@@ -25,7 +25,6 @@ interface ProjectFormProps {
 
 export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormProps) {
   const [error, setError] = useState<string | null>(null);
-  const [techInput, setTechInput] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   const {
@@ -41,34 +40,18 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
       title: initialData?.title ?? "",
       slug: initialData?.slug ?? "",
       description: initialData?.description ?? "",
-      long_description: initialData?.long_description ?? "",
+      content: initialData?.content ?? "",
       thumbnail_url: initialData?.thumbnail_url ?? "",
-      demo_url: initialData?.demo_url ?? "",
+      live_url: initialData?.live_url ?? "",
       github_url: initialData?.github_url ?? "",
-      technologies: initialData?.technologies ?? [],
+      skill_ids: initialData?.skills?.map((s) => s.id) ?? [],
       is_featured: initialData?.is_featured ?? false,
       is_published: initialData?.is_published ?? false,
-      order: initialData?.order ?? 0,
+      sort_order: initialData?.sort_order ?? 0,
     },
   });
 
-  const technologies = watch("technologies");
   const thumbnailUrl = watch("thumbnail_url");
-
-  const handleAddTech = () => {
-    const trimmed = techInput.trim();
-    if (trimmed && !technologies.includes(trimmed)) {
-      setValue("technologies", [...technologies, trimmed]);
-      setTechInput("");
-    }
-  };
-
-  const handleRemoveTech = (tech: string) => {
-    setValue(
-      "technologies",
-      technologies.filter((t) => t !== tech)
-    );
-  };
 
   const handleFormSubmit = async (data: ProjectFormData) => {
     setError(null);
@@ -121,11 +104,11 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
       </div>
 
       <div className="space-y-2">
-        <Label>Long Description</Label>
+        <Label>Content</Label>
         <div data-color-mode="light">
           <Controller
             control={control}
-            name="long_description"
+            name="content"
             render={({ field }) => (
               <MDEditor
                 value={field.value ?? ""}
@@ -157,10 +140,10 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="demo_url">Demo URL</Label>
-          <Input id="demo_url" {...register("demo_url")} />
-          {errors.demo_url && (
-            <p className="text-sm text-destructive">{errors.demo_url.message}</p>
+          <Label htmlFor="live_url">Live URL</Label>
+          <Input id="live_url" {...register("live_url")} />
+          {errors.live_url && (
+            <p className="text-sm text-destructive">{errors.live_url.message}</p>
           )}
         </div>
         <div className="space-y-2">
@@ -172,52 +155,13 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label>Technologies</Label>
-        <div className="flex gap-2">
-          <Input
-            value={techInput}
-            onChange={(e) => setTechInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleAddTech();
-              }
-            }}
-            placeholder="Add technology..."
-          />
-          <Button type="button" variant="outline" onClick={handleAddTech}>
-            Add
-          </Button>
-        </div>
-        {technologies.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {technologies.map((tech) => (
-              <span
-                key={tech}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-secondary text-secondary-foreground text-sm"
-              >
-                {tech}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTech(tech)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  x
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="order">Order</Label>
+          <Label htmlFor="sort_order">Sort Order</Label>
           <Input
-            id="order"
+            id="sort_order"
             type="number"
-            {...register("order", { valueAsNumber: true })}
+            {...register("sort_order", { valueAsNumber: true })}
           />
         </div>
 

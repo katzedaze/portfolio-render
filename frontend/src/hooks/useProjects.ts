@@ -34,7 +34,7 @@ export function useUpdateProject() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<ProjectFormData> }) =>
-      api.put<Project>(`/api/projects/${id}`, data),
+      api.patch<Project>(`/api/projects/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all });
     },

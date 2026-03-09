@@ -86,7 +86,7 @@ export default function AdminProjectsPage() {
                 <TableHead>Title</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Featured</TableHead>
-                <TableHead>Technologies</TableHead>
+                <TableHead>Skills</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -108,14 +108,14 @@ export default function AdminProjectsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 flex-wrap max-w-xs">
-                      {project.technologies.slice(0, 3).map((tech) => (
-                        <Badge key={tech} variant="outline" className="text-xs">
-                          {tech}
+                      {project.skills.slice(0, 3).map((skill) => (
+                        <Badge key={skill.id} variant="outline" className="text-xs">
+                          {skill.name}
                         </Badge>
                       ))}
-                      {project.technologies.length > 3 && (
+                      {project.skills.length > 3 && (
                         <span className="text-xs text-muted-foreground">
-                          +{project.technologies.length - 3}
+                          +{project.skills.length - 3}
                         </span>
                       )}
                     </div>

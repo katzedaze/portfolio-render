@@ -41,25 +41,25 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <p className="text-muted-foreground text-sm line-clamp-3">
           {project.description}
         </p>
-        {project.technologies.length > 0 && (
+        {project.skills.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-3">
-            {project.technologies.slice(0, 5).map((tech) => (
-              <Badge key={tech} variant="outline" className="text-xs">
-                {tech}
+            {project.skills.slice(0, 5).map((skill) => (
+              <Badge key={skill.id} variant="outline" className="text-xs">
+                {skill.name}
               </Badge>
             ))}
-            {project.technologies.length > 5 && (
+            {project.skills.length > 5 && (
               <Badge variant="outline" className="text-xs">
-                +{project.technologies.length - 5}
+                +{project.skills.length - 5}
               </Badge>
             )}
           </div>
         )}
       </CardContent>
       <CardFooter className="gap-2">
-        {project.demo_url && (
+        {project.live_url && (
           <Button variant="default" size="sm" asChild>
-            <a href={project.demo_url} target="_blank" rel="noopener noreferrer">
+            <a href={project.live_url} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-3 w-3 mr-1" />
               Demo
             </a>

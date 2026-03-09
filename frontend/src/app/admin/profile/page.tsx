@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +25,6 @@ export default function AdminProfilePage() {
     register,
     handleSubmit,
     reset,
-    control,
     watch,
     setValue,
     formState: { errors },
@@ -40,14 +38,10 @@ export default function AdminProfilePage() {
         name: profile.name,
         title: profile.title,
         bio: profile.bio,
-        email: profile.email,
+        email: profile.email ?? "",
         github_url: profile.github_url ?? "",
         linkedin_url: profile.linkedin_url ?? "",
-        twitter_url: profile.twitter_url ?? "",
-        website_url: profile.website_url ?? "",
         avatar_url: profile.avatar_url ?? "",
-        resume_url: profile.resume_url ?? "",
-        is_available: profile.is_available,
       });
     }
   }, [profile, reset]);
@@ -139,18 +133,6 @@ export default function AdminProfilePage() {
                 <Label>LinkedIn URL</Label>
                 <Input {...register("linkedin_url")} />
               </div>
-              <div className="space-y-2">
-                <Label>Twitter URL</Label>
-                <Input {...register("twitter_url")} />
-              </div>
-              <div className="space-y-2">
-                <Label>Website URL</Label>
-                <Input {...register("website_url")} />
-              </div>
-              <div className="space-y-2">
-                <Label>Resume URL</Label>
-                <Input {...register("resume_url")} />
-              </div>
             </div>
 
             <div className="space-y-2">
@@ -165,21 +147,6 @@ export default function AdminProfilePage() {
                 }}
                 disabled={updateProfile.isPending}
               />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Controller
-                control={control}
-                name="is_available"
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    id="is_available"
-                  />
-                )}
-              />
-              <Label htmlFor="is_available">Available for hire</Label>
             </div>
 
             <Button type="submit" disabled={updateProfile.isPending}>
