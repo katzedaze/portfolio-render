@@ -5,9 +5,14 @@
 ## アーキテクチャ
 
 ```text
+[ブラウザ]
+   │
+   │  /api/* (相対パス)
+   ▼
 [Vercel]  ──  フロントエンド (Next.js)
    │
-   │  NEXT_PUBLIC_API_URL
+   │  Next.js rewrites でプロキシ
+   │  (NEXT_PUBLIC_API_URL → バックエンド)
    ▼
 [Fly.io / Render / Railway]  ──  バックエンド (FastAPI)
    │
@@ -15,6 +20,11 @@
    ▼
 [マネージド PostgreSQL]
 ```
+
+> **重要**: ブラウザからの API リクエストは全て相対パス (`/api/*`) で送信され、
+> Next.js の rewrites (`next.config.ts`) がバックエンドにプロキシする。
+> これにより CORS の問題を回避している。`NEXT_PUBLIC_API_URL` は
+> SSR のサーバーサイド fetch と rewrites のプロキシ先として使用される。
 
 ## 現在のデプロイ先
 
@@ -28,7 +38,7 @@
 
 | 変数名 | 設定先 | 説明 |
 | --- | --- | --- |
-| `NEXT_PUBLIC_API_URL` | フロントエンド | バックエンドの本番 URL |
+| `NEXT_PUBLIC_API_URL` | フロントエンド (Vercel) | バックエンドの本番 URL (rewrites プロキシ先 + SSR fetch 用) |
 | `DATABASE_URL` | バックエンド | PostgreSQL 接続文字列 |
 | `SECRET_KEY` | バックエンド | JWT 署名用秘密鍵 (ランダム文字列) |
 | `ADMIN_EMAIL` | バックエンド | 管理者ログインメール |
@@ -71,10 +81,25 @@ vercel --prod --yes
 - `frontend/vercel.json` — `installCommand: bun install`, `buildCommand: bun run build`
 - `frontend/next.config.ts` — `output: "standalone"` / API リライト / 画像ホスト許可
 
+### Vercel の API プロキシ
+
+ブラウザからの API リクエストは全て相対パス (`/api/*`) で送信される。
+Next.js の rewrites (`next.config.ts`) が `NEXT_PUBLIC_API_URL` 先のバックエンドにプロキシする。
+
+```text
+ブラウザ  →  /api/projects  →  Vercel (Next.js)  →  https://backend.fly.dev/api/projects
+```
+
+- `frontend/src/lib/api.ts` の `BASE_URL` は常に空文字 (相対パス)
+- `frontend/src/lib/auth.ts` のログインも相対パスで `/api/auth/login` に POST
+- SSR のサーバーサイド fetch (例: `app/page.tsx`) は `NEXT_PUBLIC_API_URL` を直接使用
+
 ### Vercel 注意事項
 
 - `NEXT_PUBLIC_API_URL` はビルド時に埋め込まれるため、変更後は再デプロイが必要
+- **`NEXT_PUBLIC_` 変数をブラウザ側のコードで直接参照してはいけない** — Next.js バンドラーがビルド時にリテラル置換するため、ランタイムの条件分岐が効かない。ブラウザからは必ず相対パスを使い、rewrites でプロキシすること
 - 画像最適化は Vercel が自動で処理する
+- `.vercel/` は `.gitignore` に追加済み
 
 ---
 
@@ -145,6 +170,8 @@ fly machine restart <machine-id> --app portfolio-backend-little-morning-3672
 - 自動スケール: リクエストがなければマシン停止、アクセス時に自動起動
 - ヘルスチェック: `/api/health` (30秒間隔)
 - ボリューム: `uploads_data` → `/code/uploads`
+- `redirect_slashes=False` — FastAPI の末尾スラッシュ自動リダイレクトを無効化
+  (Next.js rewrites との 307 リダイレクトループを防止)
 
 ### Fly.io 注意点
 
@@ -154,6 +181,8 @@ fly machine restart <machine-id> --app portfolio-backend-little-morning-3672
   シングルクォートで囲むか、英数字のみのパスワードを使用する
 - 管理者ユーザーはアプリ起動時に一度だけシードされる。パスワード変更後は
   SSH で既存ユーザーを削除してからマシンを再起動する
+- **ルートパスに末尾スラッシュを使わない**: `redirect_slashes=False` のため、
+  ルート定義は `@router.get("")` とする (`@router.get("/")` ではない)
 
 ---
 
@@ -232,7 +261,9 @@ curl -X POST https://portfolio-backend-little-morning-3672.fly.dev/api/auth/logi
 
 ### CORS 設定
 
-フロントエンドのドメインを変更した場合は、`backend/app/main.py` の `allow_origins` にドメインを追加して再デプロイすること。
+ブラウザからは Next.js rewrites 経由でアクセスするため、通常は CORS の問題は発生しない。
+ただしフロントエンドから直接バックエンドにアクセスするケースがある場合は、
+`backend/app/main.py` の `allow_origins` にドメインを追加して再デプロイすること。
 
 ---
 
@@ -257,10 +288,15 @@ curl -X POST https://portfolio-backend-little-morning-3672.fly.dev/api/auth/logi
 
 | 症状 | 原因・対処 |
 | --- | --- |
-| フロントエンドから API にアクセスできない | `NEXT_PUBLIC_API_URL` が正しいか確認。`backend/app/main.py` の CORS 設定を確認 |
+| フロントエンドから API にアクセスできない | `NEXT_PUBLIC_API_URL` が正しいか確認。rewrites が正しく動作しているかブラウザの DevTools Network タブで確認 |
+| ブラウザから `localhost:8000` にリクエストが飛ぶ | `api.ts` や `auth.ts` で `NEXT_PUBLIC_API_URL` を直接参照していないか確認。ブラウザ側は必ず相対パスを使うこと |
+| 307 Temporary Redirect のループ | バックエンドの `redirect_slashes=False` が設定されているか、ルート定義が `""` (スラッシュなし) か確認 |
+| 422 Unprocessable Content (ログイン) | ログインは JSON (`{"email":"...","password":"..."}`) で送信する。form-urlencoded ではない |
+| CORS エラー | ブラウザから直接バックエンドにアクセスしていないか確認。rewrites 経由なら CORS は不要 |
 | `Can't load plugin: sqlalchemy.dialects:postgres` | `DATABASE_URL` が `postgres://` で始まっている。`database.py` の変換処理を確認 |
 | DB 接続エラー | `DATABASE_URL` の形式を確認 (`postgresql://user:pass@host:5432/dbname`) |
 | マイグレーションエラー | `fly ssh console` や Render Shell でログを確認 |
 | 画像アップロードが保存されない | ボリューム/ディスクが正しくマウントされているか確認 |
 | 管理者ログインできない | `ADMIN_EMAIL` / `ADMIN_PASSWORD` が正しく設定されているか確認。パスワード変更時は既存ユーザー削除後にマシン再起動 |
 | Vercel で `frontend/frontend` エラー | `.vercel/` がプロジェクトルートにあるか確認。`frontend/` 内にあると二重パスになる |
+| 管理画面でプロジェクトが表示されない | 管理画面は `/api/projects/admin` (認証必須) を使用。公開 API `/api/projects` は published のみ返す |
