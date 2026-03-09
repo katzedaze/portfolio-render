@@ -54,8 +54,8 @@ describe('auth', () => {
       const [url, options] = mockFetch.mock.calls[0]
       expect(url).toContain('/api/auth/login')
       expect(options.method).toBe('POST')
-      expect(options.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
-      expect(options.body).toContain('username=admin%40example.com')
+      expect(options.headers['Content-Type']).toBe('application/json')
+      expect(JSON.parse(options.body)).toEqual({ email: 'admin@example.com', password: 'secret' })
     })
 
     it('throws an error on failed login', async () => {

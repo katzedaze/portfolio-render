@@ -3,14 +3,10 @@ import type { LoginResponse } from "@/types";
 const TOKEN_KEY = "token";
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
-  const formData = new URLSearchParams();
-  formData.append("username", email);
-  formData.append("password", password);
-
   const res = await fetch(`/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formData.toString(),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
   });
 
   if (!res.ok) {
