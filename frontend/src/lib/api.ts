@@ -1,9 +1,6 @@
-// On the client (browser), use relative URLs so requests go through Next.js
-// rewrites which proxy to the backend. On the server (SSR), use the full URL.
-const BASE_URL =
-  typeof window !== "undefined"
-    ? ""
-    : process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Always use relative URLs so browser requests go through Next.js rewrites
+// which proxy to the backend. This avoids CORS issues in production.
+const BASE_URL = "";
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
