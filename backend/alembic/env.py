@@ -25,7 +25,11 @@ from sqlmodel import SQLModel  # noqa: E402
 config = context.config
 
 # Override sqlalchemy.url from settings
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Fly.io Postgres uses postgres:// scheme which SQLAlchemy doesn't accept
+database_url = settings.DATABASE_URL
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+config.set_main_option("sqlalchemy.url", database_url)
 
 # Setup Python logging from alembic.ini
 if config.config_file_name is not None:

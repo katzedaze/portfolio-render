@@ -7,7 +7,11 @@ from sqlmodel import Session, create_engine
 
 from app.config import settings
 
-engine = create_engine(settings.DATABASE_URL, echo=False)
+database_url = settings.DATABASE_URL
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+engine = create_engine(database_url, echo=False)
 
 
 def get_session():
