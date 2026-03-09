@@ -44,7 +44,7 @@ def _build_response(project: Project) -> ProjectResponse:
     )
 
 
-@router.get("/", response_model=list[ProjectResponse])
+@router.get("", response_model=list[ProjectResponse])
 def list_projects(session: SessionDep) -> list[ProjectResponse]:
     projects = session.exec(
         select(Project).where(Project.is_published == True).order_by(Project.sort_order)  # noqa: E712
@@ -60,7 +60,7 @@ def get_project(project_id: int, session: SessionDep) -> ProjectResponse:
     return _build_response(project)
 
 
-@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 def create_project(body: ProjectCreate, session: SessionDep, _: AdminDep) -> ProjectResponse:
     # Check slug uniqueness
     existing = session.exec(select(Project).where(Project.slug == body.slug)).first()

@@ -45,7 +45,7 @@ def _send_email_notification(message: ContactMessage) -> None:
         logger.exception("Failed to send email notification for contact message id=%s", message.id)
 
 
-@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
 def submit_message(body: ContactCreate, session: SessionDep) -> ContactResponse:
     message = ContactMessage(
         name=body.name,
@@ -60,7 +60,7 @@ def submit_message(body: ContactCreate, session: SessionDep) -> ContactResponse:
     return ContactResponse.model_validate(message)
 
 
-@router.get("/", response_model=list[ContactResponse])
+@router.get("", response_model=list[ContactResponse])
 def list_messages(session: SessionDep, _: AdminDep) -> list[ContactResponse]:
     messages = session.exec(
         select(ContactMessage).order_by(ContactMessage.created_at.desc())  # type: ignore[union-attr]

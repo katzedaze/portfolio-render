@@ -11,7 +11,7 @@ from app.schemas.profile import ProfileResponse, ProfileUpdate
 router = APIRouter(prefix="/api/profile", tags=["profile"])
 
 
-@router.get("/", response_model=ProfileResponse)
+@router.get("", response_model=ProfileResponse)
 def get_profile(session: SessionDep) -> ProfileResponse:
     profile = session.exec(select(Profile)).first()
     if profile is None:
@@ -19,7 +19,7 @@ def get_profile(session: SessionDep) -> ProfileResponse:
     return ProfileResponse.model_validate(profile)
 
 
-@router.put("/", response_model=ProfileResponse)
+@router.put("", response_model=ProfileResponse)
 def upsert_profile(body: ProfileUpdate, session: SessionDep, _: AdminDep) -> ProfileResponse:
     profile = session.exec(select(Profile)).first()
     if profile is None:

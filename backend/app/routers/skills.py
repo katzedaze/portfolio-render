@@ -11,13 +11,13 @@ from app.schemas.skills import SkillCreate, SkillResponse, SkillUpdate
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
 
-@router.get("/", response_model=list[SkillResponse])
+@router.get("", response_model=list[SkillResponse])
 def list_skills(session: SessionDep) -> list[SkillResponse]:
     skills = session.exec(select(Skill).order_by(Skill.sort_order)).all()
     return [SkillResponse.model_validate(s) for s in skills]
 
 
-@router.post("/", response_model=SkillResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=SkillResponse, status_code=status.HTTP_201_CREATED)
 def create_skill(body: SkillCreate, session: SessionDep, _: AdminDep) -> SkillResponse:
     skill = Skill(**body.model_dump())
     session.add(skill)
