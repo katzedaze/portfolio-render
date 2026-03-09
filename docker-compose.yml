@@ -19,6 +19,7 @@ services:
     build: ./backend
     volumes:
       - ./backend/app:/code/app
+      - ./backend/tests:/code/tests
       - ./uploads:/code/uploads
     ports:
       - "8000:8000"

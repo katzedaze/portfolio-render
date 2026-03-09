@@ -37,7 +37,7 @@ ps: ## Show running services
 # ============================================================
 
 backend-test: ## Run backend unit tests (exclude integration)
-	docker compose exec backend python -m pytest -m "not integration" -v
+	docker compose exec backend python -m pytest -m "not integration" --ignore=tests/integration -v
 
 backend-test-all: ## Run all backend tests (including integration)
 	docker compose exec backend python -m pytest -v

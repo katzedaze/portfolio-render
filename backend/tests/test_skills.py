@@ -26,14 +26,14 @@ def _get_auth_token(client: TestClient, session: Session) -> str:
 
 
 def test_list_skills_returns_empty_list(client: TestClient) -> None:
-    response = client.get("/api/skills/")
+    response = client.get("/api/skills")
     assert response.status_code == 200
     assert response.json() == []
 
 
 def test_create_skill_without_auth_returns_401(client: TestClient) -> None:
     payload = {"name": "Python", "category": "Language", "proficiency": 90}
-    response = client.post("/api/skills/", json=payload)
+    response = client.post("/api/skills", json=payload)
     assert response.status_code == 401
 
 
@@ -43,7 +43,7 @@ def test_create_skill_with_auth(client: TestClient, session: Session) -> None:
     payload = {"name": "Python", "category": "Language", "proficiency": 90, "sort_order": 0}
 
     response = client.post(
-        "/api/skills/",
+        "/api/skills",
         json=payload,
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -63,17 +63,17 @@ def test_list_skills_returns_created_skills(
 
     # Create two skills
     client.post(
-        "/api/skills/",
+        "/api/skills",
         json={"name": "Python", "category": "Language", "proficiency": 90, "sort_order": 0},
         headers={"Authorization": f"Bearer {token}"},
     )
     client.post(
-        "/api/skills/",
+        "/api/skills",
         json={"name": "React", "category": "Framework", "proficiency": 80, "sort_order": 1},
         headers={"Authorization": f"Bearer {token}"},
     )
 
-    response = client.get("/api/skills/")
+    response = client.get("/api/skills")
     assert response.status_code == 200
     skills = response.json()
     assert len(skills) == 2
@@ -84,7 +84,7 @@ def test_update_skill_with_auth(client: TestClient, session: Session) -> None:
 
     # Create a skill
     create_response = client.post(
-        "/api/skills/",
+        "/api/skills",
         json={"name": "Python", "category": "Language", "proficiency": 70, "sort_order": 0},
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -107,7 +107,7 @@ def test_update_skill_without_auth_returns_401(
     token = _get_auth_token(client, session)
 
     create_response = client.post(
-        "/api/skills/",
+        "/api/skills",
         json={"name": "Python", "category": "Language", "proficiency": 70, "sort_order": 0},
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -121,7 +121,7 @@ def test_delete_skill_with_auth(client: TestClient, session: Session) -> None:
     token = _get_auth_token(client, session)
 
     create_response = client.post(
-        "/api/skills/",
+        "/api/skills",
         json={"name": "ToDelete", "category": "Language", "proficiency": 50, "sort_order": 0},
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -134,7 +134,7 @@ def test_delete_skill_with_auth(client: TestClient, session: Session) -> None:
     assert delete_response.status_code == 204
 
     # Verify it's gone
-    list_response = client.get("/api/skills/")
+    list_response = client.get("/api/skills")
     assert len(list_response.json()) == 0
 
 

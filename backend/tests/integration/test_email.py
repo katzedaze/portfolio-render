@@ -51,7 +51,7 @@ def test_contact_form_sends_email_notification(client):
         "message": "This is an integration test message.",
     }
 
-    response = client.post("/api/contact/", json=payload)
+    response = client.post("/api/contact", json=payload)
     assert response.status_code == 201
 
     # Fetch messages from MailHog
@@ -93,7 +93,7 @@ def test_contact_form_email_body_contains_message(client):
         "message": "Unique body content XYZ789",
     }
 
-    response = client.post("/api/contact/", json=payload)
+    response = client.post("/api/contact", json=payload)
     assert response.status_code == 201
 
     mh_resp = requests.get(f"{MAILHOG_API}/v2/messages", timeout=MAILHOG_TIMEOUT)
@@ -124,7 +124,7 @@ def test_contact_form_saves_to_db_regardless_of_email(client):
         "message": "Should be in database.",
     }
 
-    response = client.post("/api/contact/", json=payload)
+    response = client.post("/api/contact", json=payload)
     assert response.status_code == 201
 
     resp_data = response.json()
@@ -152,7 +152,7 @@ def test_contact_form_no_mailhog_still_returns_201(client):
             "message": "Email will fail but API should succeed.",
         }
 
-        response = client.post("/api/contact/", json=payload)
+        response = client.post("/api/contact", json=payload)
 
     assert response.status_code == 201, (
         f"API should return 201 even when SMTP raises. Got {response.status_code}: {response.text}"

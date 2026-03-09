@@ -78,9 +78,9 @@ const defaultMutationMock = {
 describe('AdminSkillsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseCreateSkill.mockReturnValue(defaultMutationMock as ReturnType<typeof useCreateSkill>)
-    mockUseUpdateSkill.mockReturnValue(defaultMutationMock as ReturnType<typeof useUpdateSkill>)
-    mockUseDeleteSkill.mockReturnValue(defaultMutationMock as ReturnType<typeof useDeleteSkill>)
+    mockUseCreateSkill.mockReturnValue(defaultMutationMock as unknown as ReturnType<typeof useCreateSkill>)
+    mockUseUpdateSkill.mockReturnValue(defaultMutationMock as unknown as ReturnType<typeof useUpdateSkill>)
+    mockUseDeleteSkill.mockReturnValue(defaultMutationMock as unknown as ReturnType<typeof useDeleteSkill>)
   })
 
   it('shows loading state', () => {
@@ -136,7 +136,7 @@ describe('AdminSkillsPage', () => {
       data: [],
       isLoading: false,
       error: null,
-    } as ReturnType<typeof useSkills>)
+    } as unknown as ReturnType<typeof useSkills>)
 
     renderWithProviders(<AdminSkillsPage />)
     expect(screen.getByText(/no skills yet/i)).toBeInTheDocument()

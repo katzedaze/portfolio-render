@@ -128,7 +128,7 @@ describe('AdminProjectsPage', () => {
       data: [],
       isLoading: false,
       error: null,
-    } as ReturnType<typeof useProjects>)
+    } as unknown as ReturnType<typeof useProjects>)
 
     renderWithProviders(<AdminProjectsPage />)
     expect(screen.getByText(/no projects yet/i)).toBeInTheDocument()

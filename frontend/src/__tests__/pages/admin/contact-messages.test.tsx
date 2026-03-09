@@ -74,7 +74,7 @@ describe('AdminContactMessagesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseMarkMessageRead.mockReturnValue(defaultMutationMock)
-    mockUseDeleteMessage.mockReturnValue(defaultMutationMock as ReturnType<typeof useDeleteMessage>)
+    mockUseDeleteMessage.mockReturnValue(defaultMutationMock as unknown as ReturnType<typeof useDeleteMessage>)
   })
 
   it('shows loading state', () => {
@@ -148,7 +148,7 @@ describe('AdminContactMessagesPage', () => {
       data: [],
       isLoading: false,
       error: null,
-    } as ReturnType<typeof useContactMessages>)
+    } as unknown as ReturnType<typeof useContactMessages>)
 
     renderWithProviders(<AdminContactMessagesPage />)
     expect(screen.getByText(/no messages yet/i)).toBeInTheDocument()
