@@ -7,7 +7,7 @@
 **技術スタック:**
 
 - Frontend: Next.js (App Router) + TypeScript + Tailwind CSS + shadcn/ui
-- UI コンポーネント: shadcn/ui (Radix UI ベース)
+- UI コンポーネント: shadcn/ui v3+ (@base-ui/react ベース、Radix UI は不使用)
 - バリデーション: Zod (フォームバリデーション + 型安全なスキーマ定義)
 - Runtime: Bun (oven/bun:1 Docker image)
 - Backend: FastAPI + SQLModel + Alembic
@@ -62,7 +62,7 @@ services:
 
 ### 2-1. プロジェクト初期化
 
-- `pyproject.toml` — 依存: fastapi, sqlmodel, uvicorn, alembic, python-jose, passlib[bcrypt], python-multipart, pydantic-settings, psycopg2-binary
+- `pyproject.toml` — 依存: fastapi, sqlmodel, uvicorn, alembic, pyjwt, bcrypt, python-multipart, pydantic-settings, psycopg2-binary
 
 ### 2-2. コア設定
 
@@ -112,7 +112,7 @@ services:
 
 ### 2-6. 認証
 
-- JWT (python-jose) + bcrypt (passlib)
+- JWT (PyJWT, HS256, 24h expiry) + bcrypt (直接使用、passlib は Python 3.13 非対応)
 - `get_current_admin` 依存関数
 - lifespan イベントで初期管理者を環境変数からシード
 
@@ -235,6 +235,50 @@ portfolio/
 │       └── services/     # ビジネスロジック
 └── uploads/              # アップロードファイル (Docker volume)
 ```
+
+---
+
+## Phase 5: TanStack Query 導入
+
+- `@tanstack/react-query` / `@tanstack/react-query-devtools` 導入
+- `src/lib/queryKeys.ts` — クエリキーファクトリ
+- `src/hooks/*.ts` — カスタムフック (useQuery/useMutation ラッパー)
+- 全管理ページを useState+useEffect から TanStack Query v5 にリファクタリング
+
+---
+
+## Phase 6: 画像アップロード強化
+
+- `src/components/ui/ImageUpload.tsx` — D&D / プレビュー / バリデーション
+- ProjectForm / ProfileForm に統合
+- バックエンド 5MB 上限 (HTTP 413)
+
+---
+
+## Phase 7: Markdown エディタ & レンダリング
+
+- `@uiw/react-md-editor` (管理画面、動的インポート `ssr: false`)
+- `react-markdown` + `remark-gfm` + `rehype-highlight` (公開ページ)
+- `MarkdownRenderer` コンポーネントで XSS 対策
+
+---
+
+## Phase 8: テスト
+
+- **フロントエンド**: Vitest + Testing Library (100+ テスト)
+- **バックエンド**: pytest + httpx (24 ユニットテスト + 4 MailHog 結合テスト)
+- **E2E**: `scripts/e2e-test.sh` (9 ステップ)
+
+---
+
+## Phase 9: CI/CD & デプロイ
+
+- **CI**: GitHub Actions — 4 ジョブ並行 (backend-test / frontend-typecheck / frontend-test / frontend-build)
+- **フロントエンド**: Vercel にデプロイ (`frontend/vercel.json`, Root Directory: `frontend/`)
+- **バックエンド**: Fly.io にデプロイ (`fly.toml`, nrt リージョン, `backend/Dockerfile.prod`)
+- **本番 URL**:
+  - フロントエンド: <https://portfolio-render-eight.vercel.app>
+  - バックエンド: <https://portfolio-backend-little-morning-3672.fly.dev>
 
 ---
 

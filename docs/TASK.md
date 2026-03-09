@@ -263,8 +263,8 @@
 - [x] `frontend/vercel.json` — Vercel 設定ファイル (bun install / bun run build)
 - [x] `frontend/Dockerfile.prod` — 本番用マルチステージビルド (standalone 出力)
 - [x] `next.config.ts` — `output: "standalone"` 追加
-- [ ] Vercel ダッシュボードで Root Directory を `frontend/` に設定 (手動)
-- [ ] 環境変数 `NEXT_PUBLIC_API_URL` を本番バックエンド URL に設定 (手動)
+- [x] Vercel ダッシュボードで Root Directory を `frontend/` に設定
+- [x] 環境変数 `NEXT_PUBLIC_API_URL` を本番バックエンド URL に設定
 
 ### 9-3. バックエンドデプロイ
 
@@ -272,6 +272,6 @@
 - [x] `fly.toml` — Fly.io 設定 (nrt リージョン / ヘルスチェック / ボリューム)
 - [x] `render.yaml` — Render Blueprint (バックエンド + マネージド PostgreSQL)
 - [x] `railway.json` — Railway 設定 (Dockerfile ビルド / ヘルスチェック)
-- [ ] いずれかのプラットフォームで実際にデプロイ (手動)
-- [ ] 本番 DB (マネージド PostgreSQL) 設定 (手動)
-- [ ] 環境変数設定 (DATABASE_URL, SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD 等) (手動)
+- [x] Fly.io にバックエンドをデプロイ (<https://portfolio-backend-little-morning-3672.fly.dev>)
+- [x] 本番 DB (マネージド PostgreSQL) 設定
+- [x] 環境変数設定 (DATABASE_URL, SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD 等)
