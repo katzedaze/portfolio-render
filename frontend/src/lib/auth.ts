@@ -1,4 +1,3 @@
-import { api } from "./api";
 import type { LoginResponse } from "@/types";
 
 const TOKEN_KEY = "token";
@@ -8,9 +7,7 @@ export async function login(email: string, password: string): Promise<LoginRespo
   formData.append("username", email);
   formData.append("password", password);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  const res = await fetch(`/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: formData.toString(),
