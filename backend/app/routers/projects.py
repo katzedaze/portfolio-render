@@ -45,17 +45,28 @@ def _build_response(project: Project) -> ProjectResponse:
 
 
 @router.get("", response_model=list[ProjectResponse])
-def list_projects(session: SessionDep) -> list[ProjectResponse]:
-    projects = session.exec(
-        select(Project).where(Project.is_published == True).order_by(Project.sort_order)  # noqa: E712
-    ).all()
+def list_projects(
+    session: SessionDep,
+    is_featured: bool | None = None,
+) -> list[ProjectResponse]:
+    query = select(Project).where(Project.is_published == True)  # noqa: E712
+    if is_featured is not None:
+        query = query.where(Project.is_featured == is_featured)  # noqa: E712
+    projects = session.exec(query.order_by(Project.sort_order)).all()
+    return [_build_response(p) for p in projects]
+
+
+@router.get("/admin", response_model=list[ProjectResponse])
+def list_all_projects(session: SessionDep, _: AdminDep) -> list[ProjectResponse]:
+    """Return all projects (including drafts) for the admin dashboard."""
+    projects = session.exec(select(Project).order_by(Project.sort_order)).all()
     return [_build_response(p) for p in projects]
 
 
 @router.get("/{project_id}", response_model=ProjectResponse)
 def get_project(project_id: int, session: SessionDep) -> ProjectResponse:
     project = session.get(Project, project_id)
-    if project is None or not project.is_published:
+    if project is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
     return _build_response(project)
 

@@ -7,7 +7,7 @@ import type { ProjectFormData } from "@/lib/validations/project";
 export function useProjects() {
   return useQuery({
     queryKey: queryKeys.projects.list(),
-    queryFn: () => api.get<Project[]>("/api/projects"),
+    queryFn: () => api.get<Project[]>("/api/projects/admin"),
   });
 }
 

@@ -10,7 +10,7 @@ async function getData() {
   try {
     const [profileRes, projectsRes, skillsRes] = await Promise.allSettled([
       fetch(`${API_URL}/api/profile`, { next: { revalidate: 60 } }),
-      fetch(`${API_URL}/api/projects?is_published=true&is_featured=true`, {
+      fetch(`${API_URL}/api/projects?is_featured=true`, {
         next: { revalidate: 60 },
       }),
       fetch(`${API_URL}/api/skills`, { next: { revalidate: 60 } }),

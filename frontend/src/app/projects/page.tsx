@@ -11,7 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 async function getProjects(): Promise<Project[]> {
   try {
-    const res = await fetch(`${API_URL}/api/projects?is_published=true`, {
+    const res = await fetch(`${API_URL}/api/projects`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return [];
