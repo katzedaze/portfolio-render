@@ -74,6 +74,7 @@ app.add_middleware(
 from app.routers import (  # noqa: E402 - after app creation
     auth,
     contact,
+    dashboard,
     health,
     profile,
     projects,
@@ -83,6 +84,7 @@ from app.routers import (  # noqa: E402 - after app creation
 
 app.include_router(health.router)
 app.include_router(auth.router)
+app.include_router(dashboard.router)
 app.include_router(projects.router)
 app.include_router(skills.router)
 app.include_router(profile.router)
